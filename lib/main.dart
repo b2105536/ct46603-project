@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'ui/houses/houses_manager.dart';
-import 'ui/houses/house_detail_screen.dart';
+// import 'ui/houses/houses_manager.dart';
+// import 'ui/houses/house_detail_screen.dart';
+import 'ui/houses/houses_overview_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -53,9 +54,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    final house = HousesManager().houses[0];
-    return SafeArea(
-      child: HouseDetailScreen(house, house.rooms),
+    //final house = HousesManager().houses[0];
+    return const SafeArea(
+      child: HousesOverviewScreen(),
     );
   }
 }

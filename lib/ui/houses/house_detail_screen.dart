@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../models/house.dart';
 import '../../models/room.dart';
+import '../../utils/currency_formatter.dart';
 
 class HouseDetailScreen extends StatefulWidget {
   final House house;
@@ -32,9 +32,6 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currencyFormatter =
-        NumberFormat.currency(locale: 'vi_VN', symbol: 'VND');
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.house.name),
@@ -118,7 +115,7 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  '${currencyFormatter.format(widget.house.rent)}/tháng',
+                  '${CurrencyFormatter.format(widget.house.rent)}/tháng',
                   style: const TextStyle(
                     color: Colors.red,
                     fontWeight: FontWeight.bold,
