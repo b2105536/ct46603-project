@@ -15,10 +15,11 @@ class HouseDetailScreen extends StatefulWidget {
 }
 
 class _HouseDetailScreenState extends State<HouseDetailScreen> {
+  final GlobalKey _imageContainerKey = GlobalKey();
   final PageController _pageController = PageController();
   int _currentPage = 0;
   double _imageHeight = 250;
-  final GlobalKey _imageContainerKey = GlobalKey();
+  Room? _selectedRoom;
 
   @override
   void initState() {
@@ -37,11 +38,14 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
         title: Text(widget.house.name),
       ),
       body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onVerticalDragUpdate: (details) {
-          setState(() {
-            _imageHeight =
-                (_imageHeight + details.delta.dy).clamp(250.0, 400.0);
-          });
+          if (_selectedRoom == null) {
+            setState(() {
+              _imageHeight += details.primaryDelta!;
+              _imageHeight = _imageHeight.clamp(250.0, 400.0);
+            });
+          }
         },
         onHorizontalDragUpdate: (details) {
           RenderBox renderBox = _imageContainerKey.currentContext!
@@ -146,11 +150,11 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  "Danh sách phòng",
-                  style: TextStyle(
+                  "Danh sách phòng (Còn ${widget.rooms.where((room) => room.status == 'Còn trống').length} phòng trống)",
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
@@ -172,7 +176,15 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                     final room = widget.rooms[index];
                     return ElevatedButton(
                       onPressed: () {
-                        // Mở thông tin chi tiết phòng
+                        setState(() {
+                          if (_selectedRoom == room) {
+                            _selectedRoom = null;
+                            _imageHeight = 250;
+                          } else {
+                            _selectedRoom = room;
+                            _imageHeight = 250;
+                          }
+                        });
                       },
                       child: SizedBox(
                         width: 120,
@@ -187,10 +199,151 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                   },
                 ),
               ),
+              const SizedBox(height: 16),
+              if (_selectedRoom != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Thông tin chi tiết",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Phòng: ${_selectedRoom!.number}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Text(
+                            'Diện tích: ${_selectedRoom!.square} m²',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Text(
+                            'Trạng thái: ${_selectedRoom!.status}',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: _selectedRoom!.status == 'Còn trống'
+                                  ? Colors.green
+                                  : Colors.red,
+                            ),
+                          ),
+                          if (_selectedRoom!.status == 'Đã cho thuê')
+                            Text(
+                              'Ngày thuê: ${_selectedRoom!.rentDay.day}/${_selectedRoom!.rentDay.month}/${_selectedRoom!.rentDay.year}',
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
       ),
+      bottomNavigationBar: _buildBottomBar(context),
+    );
+  }
+
+  Widget _buildBottomBar(BuildContext context) {
+    final appBarColor = Theme.of(context).appBarTheme.backgroundColor;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          height: 1,
+          color: Colors.black,
+          margin: const EdgeInsets.symmetric(horizontal: 15),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          child: Container(
+            decoration: BoxDecoration(
+              color: appBarColor?.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.contact_phone),
+                  onPressed: () {
+                    _showContactDialog(context, widget.house.contact);
+                  },
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    print('Đã lên lịch hẹn');
+                    // Xử lý logic lên lịch hẹn ở đây
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: appBarColor,
+                  ),
+                  child: const Text(
+                    'Lên lịch hẹn',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    print('Đặt thành công');
+                    // Xử lý logic đặt ngay ở đây
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                  ),
+                  child: const Text(
+                    'Đặt ngay',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showContactDialog(BuildContext context, String contact) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.contact_phone),
+              SizedBox(width: 8),
+              Text("Liên hệ"),
+            ],
+          ),
+          content: Text("Số điện thoại: $contact"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Thoát"),
+            ),
+          ],
+        );
+      },
     );
   }
 }
