@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // import 'ui/houses/houses_manager.dart';
 // import 'ui/houses/house_detail_screen.dart';
 import 'ui/houses/houses_overview_screen.dart';
+import 'ui/shared/custom_app_bar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -71,6 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const CustomAppBar(),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

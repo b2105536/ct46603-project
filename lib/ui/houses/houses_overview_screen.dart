@@ -12,11 +12,20 @@ class HousesOverviewScreen extends StatefulWidget {
 class _HousesOverviewScreenState extends State<HousesOverviewScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Khám phá'),
+    return const Scaffold(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: 8.0, top: 8.0),
+            child: Text(
+              'Khám phá',
+              style: TextStyle(fontSize: 30.0),
+            ),
+          ),
+          Expanded(child: HousesGrid()),
+        ],
       ),
-      body: const HousesGrid(),
     );
   }
 }
