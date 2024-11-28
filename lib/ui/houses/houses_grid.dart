@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../../models/house.dart';
 import 'house_grid_tile.dart';
-import 'houses_manager.dart';
 
 class HousesGrid extends StatelessWidget {
-  const HousesGrid({super.key});
+  final List<House> houses;
+
+  const HousesGrid({super.key, required this.houses});
 
   @override
   Widget build(BuildContext context) {
-    final housesManager = HousesManager();
-    final houses = housesManager.houses;
-
     if (houses.isEmpty) {
       return const Center(
         child: Text('Hiện chưa có nhà trọ nào để hiển thị!'),
