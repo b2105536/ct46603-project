@@ -1,3 +1,4 @@
+import 'package:ct46603_project/ui/users/user_screen.dart';
 import 'package:flutter/material.dart';
 
 // import 'ui/houses/houses_manager.dart';
@@ -60,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
     const Text('Lịch sử'),
     const Text('Thanh toán'),
     const HousesOverviewScreen(),
-    const Text('Hồ sơ'),
+    const UserScreen(userPhoneNumber: '0123456789'),
   ];
 
   void _onItemTapped(int index) {
