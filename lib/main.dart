@@ -1,10 +1,9 @@
-import 'package:ct46603_project/ui/users/user_screen.dart';
 import 'package:flutter/material.dart';
 
-// import 'ui/houses/houses_manager.dart';
-// import 'ui/houses/house_detail_screen.dart';
-import 'ui/houses/houses_overview_screen.dart';
 import 'ui/shared/custom_app_bar.dart';
+import 'ui/payment/payment_transfer_screen.dart';
+import 'ui/houses/houses_overview_screen.dart';
+import 'ui/users/user_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -59,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
   static final List<Widget> _pages = <Widget>[
     const Text('Trang chủ'),
     const Text('Lịch sử'),
-    const Text('Thanh toán'),
+    const PaymentTransferScreen(),
     const HousesOverviewScreen(),
     const UserScreen(userPhoneNumber: '0123456789'),
   ];
