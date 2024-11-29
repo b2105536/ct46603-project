@@ -80,4 +80,12 @@ class HousesManager {
   ];
 
   List<House> get houses => [..._houses];
+
+  House? findById(String id) {
+    try {
+      return _houses.firstWhere((house) => house.id == id);
+    } catch (error) {
+      return null;
+    }
+  }
 }

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'transfer_screen.dart';
 
 class PaymentTransferScreen extends StatelessWidget {
+  static const routeName = '/payment_transfer';
+
   const PaymentTransferScreen({super.key});
 
   @override

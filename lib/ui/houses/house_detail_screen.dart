@@ -1,10 +1,14 @@
+import 'package:ct46603_project/models/history.dart';
+import 'package:ct46603_project/ui/histories/histories_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/house.dart';
 import '../../models/room.dart';
 import '../../utils/currency_formatter.dart';
 
 class HouseDetailScreen extends StatefulWidget {
+  static const routeName = '/house_detail';
   final House house;
   final List<Room> rooms;
 
@@ -286,8 +290,44 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    print('Đã lên lịch hẹn');
-                    // Xử lý logic lên lịch hẹn ở đây
+                    showDialog(
+                      context: context,
+                      builder: (ctx) {
+                        return AlertDialog(
+                          title: const Text('Xác nhận'),
+                          content: const Text(
+                              'Bạn chắc chắn việc lên lịch hẹn này?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(ctx).pop(),
+                              child: const Text('Hủy'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                final now = DateTime.now();
+                                final historiesManager =
+                                    Provider.of<HistoriesManager>(context,
+                                        listen: false);
+
+                                historiesManager.addRecord(
+                                  AppointmentHistory(
+                                    houseName: widget.house.name,
+                                    timestamp: now,
+                                  ),
+                                );
+                                Navigator.of(ctx).pop();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content:
+                                          Text('Lên lịch hẹn thành công!')),
+                                );
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: appBarColor,

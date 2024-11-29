@@ -6,6 +6,8 @@ import 'users_manager.dart';
 import 'user_card.dart';
 
 class UserScreen extends StatefulWidget {
+  static const routeName = '/user';
+
   final String userPhoneNumber;
 
   const UserScreen({super.key, required this.userPhoneNumber});

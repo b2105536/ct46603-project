@@ -5,6 +5,8 @@ import 'houses_grid.dart';
 import 'houses_manager.dart';
 
 class HousesOverviewScreen extends StatefulWidget {
+  static const routeName = '/houses';
+
   const HousesOverviewScreen({super.key});
 
   @override

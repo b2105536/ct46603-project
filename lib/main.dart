@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'ui/screens.dart';
 import 'ui/shared/custom_app_bar.dart';
-import 'ui/payment/payment_transfer_screen.dart';
-import 'ui/houses/houses_overview_screen.dart';
-import 'ui/users/user_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,11 +33,41 @@ class MyApp extends StatelessWidget {
       ),
     );
 
-    return MaterialApp(
-      title: 'C-Housing',
-      debugShowCheckedModeBanner: false,
-      theme: themeData,
-      home: const MyHomePage(title: 'C-House'),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (ctx) => HistoriesManager()),
+      ],
+      child: MaterialApp(
+        title: 'C-Housing',
+        debugShowCheckedModeBanner: false,
+        theme: themeData,
+        home: const MyHomePage(title: 'C-House'),
+        routes: {
+          HistoryScreen.routeName: (ctx) =>
+              const SafeArea(child: HistoryScreen()),
+          PaymentTransferScreen.routeName: (ctx) =>
+              const SafeArea(child: PaymentTransferScreen()),
+          HousesOverviewScreen.routeName: (ctx) =>
+              const SafeArea(child: HousesOverviewScreen()),
+          UserScreen.routeName: (ctx) =>
+              const SafeArea(child: UserScreen(userPhoneNumber: '0123456789')),
+        },
+        onGenerateRoute: (settings) {
+          if (settings.name == HouseDetailScreen.routeName) {
+            final houseId = settings.arguments as String;
+            return MaterialPageRoute(
+              settings: settings,
+              builder: (ctx) {
+                return SafeArea(
+                  child: HouseDetailScreen(HousesManager().findById(houseId)!,
+                      HousesManager().findById(houseId)!.rooms),
+                );
+              },
+            );
+          }
+          return null;
+        },
+      ),
     );
   }
 }
@@ -57,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   static final List<Widget> _pages = <Widget>[
     const Text('Trang chủ'),
-    const Text('Lịch sử'),
+    const HistoryScreen(),
     const PaymentTransferScreen(),
     const HousesOverviewScreen(),
     const UserScreen(userPhoneNumber: '0123456789'),
