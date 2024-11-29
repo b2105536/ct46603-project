@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
+  final GlobalKey<ScaffoldState> scaffoldKey;
 
-  const CustomAppBar({super.key, this.title = 'C-House'});
+  const CustomAppBar(
+      {super.key, this.title = 'C-House', required this.scaffoldKey});
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           bottomLeft: Radius.circular(40),
         ),
       ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            scaffoldKey.currentState?.openEndDrawer();
+          },
+        ),
+      ],
     );
   }
 

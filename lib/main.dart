@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'ui/screens.dart';
 import 'ui/shared/custom_app_bar.dart';
+import 'ui/shared/app_drawer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -100,8 +101,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
     return Scaffold(
-      appBar: const CustomAppBar(),
+      key: scaffoldKey,
+      appBar: CustomAppBar(scaffoldKey: scaffoldKey),
+      endDrawer: const AppDrawer(),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

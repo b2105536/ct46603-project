@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
-import '../../models/house.dart';
 import '../../utils/currency_formatter.dart';
+import '../../models/house.dart';
+import '../../models/history.dart';
+import '../histories/histories_manager.dart';
 import 'house_detail_screen.dart';
 
 class HouseGridTile extends StatelessWidget {
@@ -17,7 +21,35 @@ class HouseGridTile extends StatelessWidget {
         footer: HouseGridFooter(
           house: house,
           onSetAppointmentPressed: () {
-            print('Set an appointment');
+            final snackBar = SnackBar(
+              content: const Text('Lên lịch hẹn thành công!'),
+              action: SnackBarAction(
+                label: 'Hoàn tác',
+                onPressed: () {
+                  final historiesManager =
+                      Provider.of<HistoriesManager>(context, listen: false);
+                  historiesManager.removeRecord(house.id ?? '');
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Đã hủy việc lên lịch hẹn!')),
+                  );
+                },
+              ),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+            final now = DateTime.now();
+            final historiesManager =
+                Provider.of<HistoriesManager>(context, listen: false);
+
+            final recordId = house.id ?? const Uuid().v4();
+            historiesManager.addRecord(
+              AppointmentHistory(
+                id: recordId,
+                houseName: house.name,
+                timestamp: now,
+              ),
+            );
           },
         ),
         child: GestureDetector(
