@@ -18,10 +18,17 @@ class TransferScreen extends StatelessWidget {
               'Nguồn tiền chuyển',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            const TextField(
-              decoration: InputDecoration(
-                hintText: 'Nguồn tiền',
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(
+                labelText: 'Nguồn tiền',
               ),
+              items: const [
+                DropdownMenuItem(
+                    value: 'bank', child: Text('Tài khoản ngân hàng')),
+              ],
+              onChanged: (value) {
+                //Xử lý tại đây
+              },
             ),
             const SizedBox(height: 20),
             const Text(
@@ -73,9 +80,11 @@ class TransferScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Xác nhận chuyển tiền'),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {},
+                child: const Text('Xác nhận chuyển tiền'),
+              ),
             ),
           ],
         ),

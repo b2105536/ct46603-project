@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../users/users_manager.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -6,7 +7,8 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final usersManager = UsersManager().getUserByPhoneNumber('0123456789');
+    final usersManager =
+        context.watch<UsersManager>().getUserByPhoneNumber('0123456789');
 
     final ImageProvider avatar = (usersManager.avatar.isEmpty)
         ? const AssetImage('assets/images/default_avatar.png')

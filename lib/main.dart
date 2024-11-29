@@ -36,7 +36,9 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (ctx) => HousesManager()),
         ChangeNotifierProvider(create: (ctx) => HistoriesManager()),
+        ChangeNotifierProvider(create: (ctx) => UsersManager()),
       ],
       child: MaterialApp(
         title: 'C-Housing',
@@ -57,11 +59,11 @@ class MyApp extends StatelessWidget {
           if (settings.name == HouseDetailScreen.routeName) {
             final houseId = settings.arguments as String;
             return MaterialPageRoute(
-              settings: settings,
               builder: (ctx) {
                 return SafeArea(
-                  child: HouseDetailScreen(HousesManager().findById(houseId)!,
-                      HousesManager().findById(houseId)!.rooms),
+                  child: HouseDetailScreen(
+                      ctx.read<HousesManager>().findById(houseId)!,
+                      ctx.read<HousesManager>().findById(houseId)!.rooms),
                 );
               },
             );
@@ -86,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
   static final List<Widget> _pages = <Widget>[
-    const Text('Trang chủ'),
+    const HomeScreen(),
     const HistoryScreen(),
     const PaymentTransferScreen(),
     const HousesOverviewScreen(),

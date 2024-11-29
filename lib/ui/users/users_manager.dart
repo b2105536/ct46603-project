@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
+
 import '../../models/user.dart';
 
-class UsersManager {
+class UsersManager with ChangeNotifier {
   final List<User> _users = [
     User(
       id: 'u1',
@@ -34,9 +36,10 @@ class UsersManager {
   }
 
   void updateUser(String id, User updatedUser) {
-    final index = users.indexWhere((u) => u.id == id);
+    final index = _users.indexWhere((u) => u.id == id);
     if (index != -1) {
-      users[index] = updatedUser;
+      _users[index] = updatedUser;
+      notifyListeners();
     }
   }
 }

@@ -1,8 +1,8 @@
-import 'package:ct46603_project/models/history.dart';
-import 'package:ct46603_project/ui/histories/histories_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../ui/histories/histories_manager.dart';
+import '../../models/history.dart';
 import '../../models/house.dart';
 import '../../models/room.dart';
 import '../../utils/currency_formatter.dart';

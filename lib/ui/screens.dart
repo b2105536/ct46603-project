@@ -9,3 +9,5 @@ export 'payment/payment_transfer_screen.dart';
 
 export 'histories/history_screen.dart';
 export 'histories/histories_manager.dart';
+
+export 'home_screen.dart';

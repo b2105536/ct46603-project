@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/user.dart';
 
@@ -32,7 +33,7 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   void _loadUserData() {
-    final userManager = UsersManager();
+    final userManager = context.read<UsersManager>();
     user = userManager.getUserByPhoneNumber(widget.userPhoneNumber);
 
     tempName = user.name;
@@ -135,7 +136,7 @@ class _UserScreenState extends State<UserScreen> {
                   onPressed: () {
                     final updatedUser =
                         user.copyWith(name: nameController.text);
-                    final userManager = UsersManager();
+                    final userManager = context.read<UsersManager>();
                     userManager.updateUser(user.id, updatedUser);
 
                     setState(() {

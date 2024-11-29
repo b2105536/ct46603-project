@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
+
 import '../../models/house.dart';
 import '../../models/room.dart';
 
-class HousesManager {
+class HousesManager with ChangeNotifier {
   final List<House> _houses = [
     House(
       id: 'h1',
@@ -86,6 +88,14 @@ class HousesManager {
       return _houses.firstWhere((house) => house.id == id);
     } catch (error) {
       return null;
+    }
+  }
+
+  void updateHouse(House house) {
+    final index = _houses.indexWhere((house) => house.id == house.id);
+    if (index >= 0) {
+      _houses[index] = house;
+      notifyListeners();
     }
   }
 }
