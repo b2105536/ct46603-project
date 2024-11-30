@@ -79,6 +79,70 @@ class HousesManager with ChangeNotifier {
             rentDay: DateTime.now().subtract(const Duration(days: 5))),
       ],
     ),
+    House(
+      id: 'h3',
+      name: 'Nhà trọ Hồng Phát',
+      contact: '0978123456',
+      address: 'Phường Hưng Lợi, Ninh Kiều, Cần Thơ',
+      description:
+          'Nhà trọ an ninh, gần chợ và siêu thị, thích hợp cho sinh viên.',
+      imageUrls: [
+        'https://file4.batdongsan.com.vn/resize/1275x717/2024/11/19/20241119142732-7730_wm.jpg',
+      ],
+      rent: 1600000,
+      rooms: [
+        Room(
+            number: 1,
+            square: 22,
+            status: 'Còn trống',
+            rentDay: DateTime.now()),
+        Room(
+            number: 2,
+            square: 20,
+            status: 'Đã cho thuê',
+            rentDay: DateTime.now().subtract(const Duration(days: 7))),
+        Room(
+            number: 3,
+            square: 25,
+            status: 'Còn trống',
+            rentDay: DateTime.now()),
+      ],
+    ),
+    House(
+      id: 'h4',
+      name: 'Nhà trọ Tân An',
+      contact: '0939567890',
+      address: 'Đường Trần Hưng Đạo, Ninh Kiều, Cần Thơ',
+      description: 'Nhà trọ rộng rãi, có ban công và khu vực nấu ăn riêng.',
+      imageUrls: [
+        'https://file4.batdongsan.com.vn/resize/1275x717/2024/11/25/20241125210437-3603_wm.jpg',
+        'https://file4.batdongsan.com.vn/resize/1275x717/2024/11/25/20241125210437-2e8a_wm.jpg',
+        'https://file4.batdongsan.com.vn/resize/1275x717/2024/11/25/20241125210437-adca_wm.jpg',
+      ],
+      rent: 1900000,
+      rooms: [
+        Room(
+            number: 1,
+            square: 24,
+            status: 'Đã cho thuê',
+            rentDay: DateTime.now().subtract(const Duration(days: 3))),
+        Room(
+            number: 2,
+            square: 22,
+            status: 'Còn trống',
+            rentDay: DateTime.now()),
+        Room(
+            number: 3,
+            square: 20,
+            status: 'Đã cho thuê',
+            rentDay: DateTime.now().subtract(const Duration(days: 10))),
+        Room(
+            number: 4,
+            square: 26,
+            status: 'Còn trống',
+            rentDay: DateTime.now()),
+      ],
+    ),
   ];
 
   List<House> get houses => [..._houses];

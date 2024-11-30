@@ -178,26 +178,41 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                   itemCount: widget.rooms.length,
                   itemBuilder: (context, index) {
                     final room = widget.rooms[index];
+                    final isAvailable = room.status == 'Còn trống';
+                    final isSelected = _selectedRoom == room;
+
                     return ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          if (_selectedRoom == room) {
-                            _selectedRoom = null;
-                            _imageHeight = 250;
-                          } else {
-                            _selectedRoom = room;
-                            _imageHeight = 250;
-                          }
-                        });
-                      },
-                      child: SizedBox(
-                        width: 120,
-                        child: Text(
-                          'P${room.number}',
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          style: const TextStyle(fontSize: 14),
-                        ),
+                      onPressed: isAvailable
+                          ? () {
+                              setState(() {
+                                _selectedRoom = isSelected ? null : room;
+                              });
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isSelected
+                            ? Colors.green.shade100
+                            : (isAvailable
+                                ? Colors.blue.shade100
+                                : Colors.grey),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'P${room.number}',
+                            style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                          if (!isAvailable)
+                            const Text(
+                              'Đã thuê',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.red,
+                                  overflow: TextOverflow.ellipsis),
+                            ),
+                        ],
                       ),
                     );
                   },
@@ -338,12 +353,45 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    print('Đặt thành công');
-                    // Xử lý logic đặt ngay ở đây
-                  },
+                  onPressed: _selectedRoom != null
+                      ? () {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) {
+                              return AlertDialog(
+                                title: const Text('Xác nhận đặt phòng'),
+                                content: Text(
+                                    'Bạn có chắc muốn đặt phòng P${_selectedRoom!.number}?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(ctx).pop(),
+                                    child: const Text('Hủy'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      // Xử lý logic đặt phòng ở đây
+                                      print(
+                                          'Đặt phòng thành công: P${_selectedRoom!.number}');
+                                      Navigator.of(ctx).pop();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              'Đặt phòng P${_selectedRoom!.number} thành công!'),
+                                        ),
+                                      );
+                                    },
+                                    child: const Text('Đặt phòng'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor:
+                        _selectedRoom != null ? Colors.red : Colors.grey,
                   ),
                   child: const Text(
                     'Đặt ngay',
