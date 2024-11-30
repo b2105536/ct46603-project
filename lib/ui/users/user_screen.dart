@@ -9,9 +9,7 @@ import 'user_card.dart';
 class UserScreen extends StatefulWidget {
   static const routeName = '/user';
 
-  final String userPhoneNumber;
-
-  const UserScreen({super.key, required this.userPhoneNumber});
+  const UserScreen({super.key});
 
   @override
   State<UserScreen> createState() => _UserScreenState();
@@ -34,16 +32,33 @@ class _UserScreenState extends State<UserScreen> {
 
   void _loadUserData() {
     final userManager = context.read<UsersManager>();
-    user = userManager.getUserByPhoneNumber(widget.userPhoneNumber);
+    final currentUser = userManager.getCurrentUser();
 
-    tempName = user.name;
-    nameController.text = tempName;
-    dobController.text = user.dob != null
-        ? "${user.dob!.day}/${user.dob!.month}/${user.dob!.year}"
-        : '';
-    temaddController.text = user.temadd ?? '';
-    gender = user.gender;
-    setState(() {});
+    if (currentUser != null) {
+      user = currentUser;
+      tempName = user.name;
+      nameController.text = tempName;
+      dobController.text = user.dob != null
+          ? "${user.dob!.day}/${user.dob!.month}/${user.dob!.year}"
+          : '';
+      temaddController.text = user.temadd ?? '';
+      gender = user.gender;
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
+  DateTime? parseDate(String input) {
+    try {
+      final parts = input.split('/');
+      if (parts.length == 3) {
+        final day = int.parse(parts[0]);
+        final month = int.parse(parts[1]);
+        final year = int.parse(parts[2]);
+        return DateTime(year, month, day);
+      }
+    } catch (_) {}
+    return null;
   }
 
   @override
@@ -105,9 +120,28 @@ class _UserScreenState extends State<UserScreen> {
               ),
               _buildEditableRow(
                 label: 'Ngày sinh:',
-                child: _buildEditableTextField(
-                  controller: dobController,
-                  hintText: 'Nhập ngày sinh',
+                child: GestureDetector(
+                  onTap: () async {
+                    final selectedDate = await showDatePicker(
+                      context: context,
+                      initialDate: user.dob ?? DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    );
+
+                    if (selectedDate != null) {
+                      setState(() {
+                        dobController.text =
+                            "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+                      });
+                    }
+                  },
+                  child: AbsorbPointer(
+                    child: _buildEditableTextField(
+                      controller: dobController,
+                      hintText: 'Nhập ngày sinh',
+                    ),
+                  ),
                 ),
               ),
               _buildEditableRow(
@@ -134,10 +168,35 @@ class _UserScreenState extends State<UserScreen> {
                     ),
                   ),
                   onPressed: () {
-                    final updatedUser =
-                        user.copyWith(name: nameController.text);
+                    final parsedDob = parseDate(dobController.text);
+
+                    if (dobController.text.isNotEmpty && parsedDob == null) {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Lỗi'),
+                          content: const Text(
+                              'Ngày sinh không hợp lệ. Vui lòng nhập đúng định dạng dd/MM/yyyy.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(ctx).pop(),
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                      return;
+                    }
+
+                    final updatedUser = user.copyWith(
+                      name: nameController.text,
+                      dob: parsedDob,
+                      temadd: temaddController.text,
+                      gender: gender,
+                    );
+
                     final userManager = context.read<UsersManager>();
-                    userManager.updateUser(user.id, updatedUser);
+                    userManager.updateUser(updatedUser);
 
                     setState(() {
                       user = updatedUser;

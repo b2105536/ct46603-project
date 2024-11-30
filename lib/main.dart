@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 import 'ui/screens.dart';
 import 'ui/shared/custom_app_bar.dart';
 import 'ui/shared/app_drawer.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load();
   runApp(const MyApp());
 }
 
@@ -36,39 +38,55 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (ctx) => AuthManager()),
+        ChangeNotifierProvider(
+            create: (ctx) =>
+                UsersManager(Provider.of<AuthManager>(ctx, listen: false))),
         ChangeNotifierProvider(create: (ctx) => HousesManager()),
         ChangeNotifierProvider(create: (ctx) => HistoriesManager()),
-        ChangeNotifierProvider(create: (ctx) => UsersManager()),
       ],
-      child: MaterialApp(
-        title: 'C-Housing',
-        debugShowCheckedModeBanner: false,
-        theme: themeData,
-        home: const MyHomePage(title: 'C-House'),
-        routes: {
-          HistoryScreen.routeName: (ctx) =>
-              const SafeArea(child: HistoryScreen()),
-          PaymentTransferScreen.routeName: (ctx) =>
-              const SafeArea(child: PaymentTransferScreen()),
-          HousesOverviewScreen.routeName: (ctx) =>
-              const SafeArea(child: HousesOverviewScreen()),
-          UserScreen.routeName: (ctx) =>
-              const SafeArea(child: UserScreen(userPhoneNumber: '0123456789')),
-        },
-        onGenerateRoute: (settings) {
-          if (settings.name == HouseDetailScreen.routeName) {
-            final houseId = settings.arguments as String;
-            return MaterialPageRoute(
-              builder: (ctx) {
-                return SafeArea(
-                  child: HouseDetailScreen(
-                      ctx.read<HousesManager>().findById(houseId)!,
-                      ctx.read<HousesManager>().findById(houseId)!.rooms),
+      child: Consumer<AuthManager>(
+        builder: (ctx, authManager, child) {
+          return MaterialApp(
+            title: 'C-Housing',
+            debugShowCheckedModeBanner: false,
+            theme: themeData,
+            home: authManager.isAuth
+                ? const SafeArea(child: MyHomePage(title: 'C-House'))
+                : FutureBuilder(
+                    future: authManager.tryAutoLogin(),
+                    builder: (ctx, snapshot) {
+                      return snapshot.connectionState == ConnectionState.waiting
+                          ? const SafeArea(child: SplashScreen())
+                          : const SafeArea(child: AuthScreen());
+                    },
+                  ),
+            routes: {
+              HistoryScreen.routeName: (ctx) =>
+                  const SafeArea(child: HistoryScreen()),
+              PaymentTransferScreen.routeName: (ctx) =>
+                  const SafeArea(child: PaymentTransferScreen()),
+              HousesOverviewScreen.routeName: (ctx) =>
+                  const SafeArea(child: HousesOverviewScreen()),
+              UserScreen.routeName: (ctx) =>
+                  const SafeArea(child: UserScreen()),
+            },
+            onGenerateRoute: (settings) {
+              if (settings.name == HouseDetailScreen.routeName) {
+                final houseId = settings.arguments as String;
+                return MaterialPageRoute(
+                  builder: (ctx) {
+                    return SafeArea(
+                      child: HouseDetailScreen(
+                          ctx.read<HousesManager>().findById(houseId)!,
+                          ctx.read<HousesManager>().findById(houseId)!.rooms),
+                    );
+                  },
                 );
-              },
-            );
-          }
-          return null;
+              }
+              return null;
+            },
+          );
         },
       ),
     );
@@ -92,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
     const HistoryScreen(),
     const PaymentTransferScreen(),
     const HousesOverviewScreen(),
-    const UserScreen(userPhoneNumber: '0123456789'),
+    const UserScreen(),
   ];
 
   void _onItemTapped(int index) {

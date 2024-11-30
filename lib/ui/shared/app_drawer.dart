@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../users/users_manager.dart';
+
+import '../auth/auth_manager.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final usersManager =
-        context.watch<UsersManager>().getUserByPhoneNumber('0123456789');
+    final authManager = context.watch<AuthManager>();
+    final user = authManager.user;
 
-    final ImageProvider avatar = (usersManager.avatar.isEmpty)
+    final ImageProvider avatar = (user!.avatar.isEmpty)
         ? const AssetImage('assets/images/default_avatar.png')
-        : AssetImage(usersManager.avatar);
+        : AssetImage(user.avatar);
 
     return Drawer(
       child: Column(
@@ -36,14 +37,14 @@ class AppDrawer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      usersManager.name,
+                      user.name,
                       style: const TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      usersManager.mobile,
+                      user.mobile,
                       style: const TextStyle(
                         fontSize: 13.0,
                         fontWeight: FontWeight.w900,
@@ -59,7 +60,10 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Đăng xuất'),
             onTap: () {
-              // Chức năng xử lý đăng xuất sẽ được thêm sau
+              Navigator.of(context)
+                ..pop()
+                ..pushReplacementNamed('/');
+              authManager.logout();
             },
           ),
         ],

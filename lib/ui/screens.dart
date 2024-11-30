@@ -11,3 +11,8 @@ export 'histories/history_screen.dart';
 export 'histories/histories_manager.dart';
 
 export 'home_screen.dart';
+
+export 'auth/auth_screen.dart';
+export 'auth/auth_manager.dart';
+
+export 'splash_screen.dart';
